@@ -1,0 +1,18 @@
+{
+  "name": "express2",
+  "version": "1.0.0",
+  "description": "My First Express JS Application ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "test",
+    "express.js"
+  ],
+  "author": "karlohorvat3502@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
