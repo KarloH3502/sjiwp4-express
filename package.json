@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "npx nodemon ./bin/www",
-    "tw": "npx tailwindcss -i ./public/stylesheets/input.css -o ./public/stylesheets/style.css --watch "
+    "tw": "npx tailwindcss -i ./public/stylesheets/input.css -o ./public/stylesheets/style.css --watch"
   },
   "dependencies": {
     "better-sqlite3": "^9.2.2",
@@ -15,6 +15,7 @@
     "express-handlebars": "^7.1.2",
     "http-errors": "~1.6.3",
     "joi": "^17.11.0",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1"
   },
   "devDependencies": {
