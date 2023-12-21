@@ -7,8 +7,18 @@ router.get("/", function(req, res, next) {
   res.render("index");
 });
 
-router.get("/protected", function(req, res, next) {
+router.get("/protected", checkAuthCookie, function(req, res, next) {
+
+  if (req.user) {
+    console.log("USER SIGNED IN");
+
+  } else {
+
+    res.send("NO USER");
+  }
+
   res.send("done");
+
 });
 
 module.exports = router;

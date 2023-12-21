@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Joi = require("joi");
 const { db } = require("../services/db.js");
-const {getUserJwt} = require("../services/auth.js");
+const { getUserJwt } = require("../services/auth.js");
+const bcrypt = require("bcrypt");
 
 // GET /users/signin
 router.get("/signin", function (req, res, next) {
@@ -38,9 +39,38 @@ router.post("/signin", function (req, res, next) {
     //spremamo JWT u cookie
     //preusmjeravamo korisnika na uspješan rezulat
     res.render("users/signin", { result: { success: true } });
-    
+
+  } else {
+    res.render("users/signin", { result: { invalid_credentials: true } });
   }
- 
+
+});
+
+// SCHEMA signup
+const schema_signup = Joi.object({
+  name: Joi.string().min(3).max(50).required(),
+  email: Joi.string().email().max(50).required(),
+  password: Joi.string().min(3).max(50).required(),
+  password_check: Joi.ref("password")
+});
+
+// POST /users/signup
+router.get("/signup", function (req, res, next) {
+  // do validation
+  const result = schema_signin.validate(req.body);
+  if (result.error) {
+    res.render("users/signup", { result: { validation_error: true, display_form: true } });
+    return;
+  }
+
+  const password_check = bcrypt.hashSync(req.body.password, 10);
+
+  console.log("DATA", req.body);
+
+});
+
+router.post("/signup", function(req, res, next) {
+  res.render("users/signup", {result: {display_form:true}});
 });
 
 module.exports = router;
