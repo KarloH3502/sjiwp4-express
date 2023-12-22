@@ -26,12 +26,23 @@ router.post("/signin", function (req, res, next) {
   }
 
   const email = req.body.email;
+  //const password = req.body.password;
   const password = req.body.password;
 
-  const stmt = db.prepare("SELECT * FROM users WHERE email = ? AND password = ?");
-  const dbResult = stmt.get(email, password);
+  const passwordHash = bcrypt.hashSync(req.body.password, 10);
+
+  const stmt = db.prepare("SELECT * FROM users WHERE email = ?");
+  const dbResult = stmt.get(email);
   console.log("DB RESULT", dbResult);
   if (dbResult) {
+
+    const passwordHash = dbResult.password;
+    const compareResult = bcrypt.compareSync(password, passwordHash);
+    if (!compareResult) {
+      res.render("users/signin", { result: { invalid_credentials: true } });
+      console.log(compareResult);
+      return;
+    }
     const token = getUserJwt(dbResult.id, dbResult.email, dbResult.name, dbResult.role);
     console.log("NEW TOKEN", token);
     res.cookie("auth", token);
@@ -54,23 +65,47 @@ const schema_signup = Joi.object({
   password_check: Joi.ref("password")
 });
 
-// POST /users/signup
+// GET /users/signin
 router.get("/signup", function (req, res, next) {
+  res.render("users/signup", { result: { display_form: true } });
+});
+
+// POST /users/signup
+router.post("/signup", function (req, res, next) {
   // do validation
-  const result = schema_signin.validate(req.body);
+  const result = schema_signup.validate(req.body);
+  console.log(req.body);
   if (result.error) {
+    console.log(result.error);
     res.render("users/signup", { result: { validation_error: true, display_form: true } });
     return;
   }
 
-  const password_check = bcrypt.hashSync(req.body.password, 10);
+  const passwordHash = bcrypt.hashSync(req.body.password, 10);
 
-  console.log("DATA", req.body);
+  const stmt = db.prepare("INSERT INTO users (email, password, name, signed_at, role) VALUES (?, ?, ?, ?, ?);");
+  const insert_result = stmt.run(req.body.email, passwordHash, req.body.name, Date.now(), "user");
+
+
+  console.log("RES", insert_result);
+
+  if (insert_result.changes && insert_result.changes === 1) {
+
+    res.render("users/signup", { result: { success: true } });
+
+  } else {
+    res.render("users/signup", { result: { database_error: true } });
+
+  }
+
+
+
+
 
 });
 
-router.post("/signup", function(req, res, next) {
-  res.render("users/signup", {result: {display_form:true}});
+router.post("/signup", function (req, res, next) {
+  res.render("users/signup", { result: { display_form: true } });
 });
 
 module.exports = router;

@@ -39,7 +39,7 @@
                      <div>
                         <label class="form-control w-full max-w-xs">
                             <div class="label">
-                                <span class="label-text">potvrda zaporke</span>
+                                <span class="label-text">Potvrda zaporke</span>
                             </div>
                             <input type="password" name="password_check" placeholder="Ponovite svoju zaporku"
                                 class="input input-bordered w-full max-w-xs" />
@@ -52,14 +52,13 @@
             </form>
             {{/if}}
 
-            {{#if result.validation_error}}
+            {{#if result.database_error}}
             <div class="mt-4">
                 <div class="card w-96 bg-error text-black">
                     <div class="card-body">
                         <h2 class="card-title">Greška!</h2>
                         <p>
-                            Dogodila se greška prilikom provjere podataka, provjerite svoj unos
-                            i pokušajte ponovno!
+                            Dogodila se greška prilikom spremanja podataka, kontaktirajte administratora!
                         </p>
                     </div>
                 </div>
