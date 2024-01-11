@@ -81,10 +81,19 @@ router.post("/signup", function (req, res, next) {
     return;
   }
 
+  const stmt1 = db.prepare("SELECT * FROM users WHERE email = ?");
+  const selectResult = stmt1.get(req.body.email);
+  if(selectResult) {
+  res.render("users/signup", { result: { email_in_use: true, display_form: true } });
+  return;
+
+  }
+  
+
   const passwordHash = bcrypt.hashSync(req.body.password, 10);
 
-  const stmt = db.prepare("INSERT INTO users (email, password, name, signed_at, role) VALUES (?, ?, ?, ?, ?);");
-  const insert_result = stmt.run(req.body.email, passwordHash, req.body.name, Date.now(), "user");
+  const stmt2 = db.prepare("INSERT INTO users (email, password, name, signed_at, role) VALUES (?, ?, ?, ?, ?);");
+  const insert_result = stmt2.run(req.body.email, passwordHash, req.body.name, Date.now(), "user");
 
 
   console.log("RES", insert_result);
@@ -96,11 +105,8 @@ router.post("/signup", function (req, res, next) {
   } else {
     res.render("users/signup", { result: { database_error: true } });
 
+    return;
   }
-
-
-
-
 
 });
 

@@ -7,7 +7,7 @@
             <form method="post" action="/users/signup">
                 <div class="py-6">
 
-                        <div>
+                    <div>
                         <label class="form-control w-full max-w-xs">
                             <div class="label">
                                 <span class="label-text">Ime i prezime</span>
@@ -36,7 +36,7 @@
                         </label>
                     </div>
 
-                     <div>
+                    <div>
                         <label class="form-control w-full max-w-xs">
                             <div class="label">
                                 <span class="label-text">Potvrda zaporke</span>
@@ -59,6 +59,19 @@
                         <h2 class="card-title">Greška!</h2>
                         <p>
                             Dogodila se greška prilikom spremanja podataka, kontaktirajte administratora!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {{/if}}
+
+            {{#if result.email_in_use}}
+            <div class="mt-4">
+                <div class="card w-96 bg-error text-black">
+                    <div class="card-body">
+                        <h2 class="card-title">Greška!</h2>
+                        <p>
+                            E-mail adresa koju ste upisali je već u upotrebi!
                         </p>
                     </div>
                 </div>
