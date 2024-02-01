@@ -62,26 +62,21 @@ router.post("/data", authRequired, function (req, res, next) {
   }
 
   let query = "UPDATE users SET";
-  if(emailChanged) query+= " email = ?,";
-  if(nameChanged) query+= " name = ?,";
-  if(passwordChanged) query+= " password = ?,"; 
-  query = query.slice(0, -1); // https://developer.mozilla.org 
+  if (emailChanged) query += " email = ?,";
+  if (nameChanged) query += " name = ?,";
+  if (passwordChanged) query += " password = ?,";
+  query = query.slice(0, -1);
   query += " WHERE email = ?;";
   dataChanged.push(currentUser.email);
 
   const stmt = db.prepare(query);
   const updateResult = stmt.run(dataChanged);
 
-  if(updateResult.changes && updateResult.changes === 1) {
-    res.render("users/data", { result: {success:true} });
-  } else { 
-    res.render("users/data", { result:{ database_error: true} });
-
+  if (updateResult.changes && updateResult.changes === 1) {
+    res.render("users/data", { result: { success: true } });
+  } else {
+    res.render("users/data", { result: { database_error: true } });
   }
-
-  console.log(updateResult);
-  return;
-
 });
 
 // GET /users/signout
@@ -156,7 +151,6 @@ router.post("/signup", function (req, res, next) {
     return;
   }
 
-
   if (!checkEmailUnique(req.body.email)) {
     res.render("users/signup", { result: { email_in_use: true, display_form: true } });
     return;
@@ -164,7 +158,7 @@ router.post("/signup", function (req, res, next) {
 
   const passwordHash = bcrypt.hashSync(req.body.password, 10);
   const stmt2 = db.prepare("INSERT INTO users (email, password, name, signed_at, role) VALUES (?, ?, ?, ?, ?);");
-  const insertResult = stmt2.run(req.body.email, passwordHash, req.body.name, Date.now(), "user");
+  const insertResult = stmt2.run(req.body.email, passwordHash, req.body.name, new Date().toISOString(), "user");
 
   if (insertResult.changes && insertResult.changes === 1) {
     res.render("users/signup", { result: { success: true } });
