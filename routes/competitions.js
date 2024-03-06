@@ -3,6 +3,7 @@ const router = express.Router();
 const { authRequired, adminRequired } = require("../services/auth.js");
 const Joi = require("joi");
 const { db } = require("../services/db.js");
+const e = require("express");
 
 // GET /competitions
 router.get("/", authRequired, function (req, res, next) {
@@ -116,18 +117,28 @@ router.post("/add", adminRequired, function (req, res, next) {
         res.render("competitions/form", { result: { database_error: true } });
     }
 });
-// GET /competitions/apply
-router.get("/apply", function (req, res, next) {
-    const stmt = db.prepare(`
-    SELECT id_apply, name_apply, email_apply, date_apply
-    FROM users u
-    WHERE id_apply = u.id
-    ORDER BY date_apply
-    `);
-     
-    const result = stmt.all();
-    res.render("competitions/apply", { result: { items: result } });
-    
+
+
+router.get("/apply", authRequired, function (req, res, next) {
+    res.render("competitions/form", { result: { display_form: true } });
+
+const checkStmt = db.prepare("SELECT count(*) FROM apply WHERE id_user = ? AND id_competition = ?;");
+const checkResult = checkStmt.get(req.user.sub, req.params.id);
+
+
+if(checkResult["count(*)"]>= 1) {
+    res.render("competitions/form", { result: { database_error: true} });
+}
+else {
+    const stmt = db.prepare("INSERT INTO apply (id_user, id_competition) VALUES (?, ?);");
+    const updateResult = stmt.run(req.user.sub, req.params.id);
+
+    if (updateResult.changes && updateResult.changes === 1){
+        res.render("competitions/form", { result: { success: true}});
+    } else {
+        res.render("competitions/form", { result: { database_error: true } });
+    }
+}
 });
 
 
