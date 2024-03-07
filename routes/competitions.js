@@ -3,6 +3,7 @@ const router = express.Router();
 const { authRequired, adminRequired } = require("../services/auth.js");
 const Joi = require("joi");
 const { db } = require("../services/db.js");
+const e = require("express");
 
 // GET /competitions
 router.get("/", authRequired, function (req, res, next) {
@@ -156,8 +157,5 @@ router.get("/apply/:id", function (req, res, next) {
         return;
     }
 });
-
-
-
 
 module.exports = router;
